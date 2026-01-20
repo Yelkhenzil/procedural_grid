@@ -30,8 +30,6 @@ sky = SubResource("Sky_a202f")
 [node name="Node3D" type="Node3D" node_paths=PackedStringArray("grid", "camera", "collider", "mouse_collision")]
 script = ExtResource("1_a0tk4")
 grid = NodePath("MeshInstance3D")
-grid_size = null
-cell_size = null
 camera = NodePath("Camera3D")
 collider = NodePath("MeshInstance3D/RigidBody3D/CollisionShape3D")
 mouse_collision = NodePath("Node")
