@@ -29,20 +29,22 @@ sky = SubResource("Sky_a202f")
 
 [node name="Node3D" type="Node3D" node_paths=PackedStringArray("grid", "camera", "collider", "mouse_collision")]
 script = ExtResource("1_a0tk4")
-grid = NodePath("VisualGrid")
+grid = NodePath("MeshInstance3D")
+grid_size = null
+cell_size = null
 camera = NodePath("Camera3D")
-collider = NodePath("VisualGrid/RigidBody3D/CollisionShape3D")
-mouse_collision = NodePath("Mouse")
+collider = NodePath("MeshInstance3D/RigidBody3D/CollisionShape3D")
+mouse_collision = NodePath("Node")
 hovered_gameobject = ExtResource("2_jka67")
 
-[node name="VisualGrid" type="MeshInstance3D" parent="."]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 material_override = SubResource("StandardMaterial3D_noarx")
 mesh = SubResource("ArrayMesh_a0tk4")
 script = ExtResource("1_a202f")
 
-[node name="RigidBody3D" type="RigidBody3D" parent="VisualGrid"]
+[node name="RigidBody3D" type="RigidBody3D" parent="MeshInstance3D"]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="VisualGrid/RigidBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D/RigidBody3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 0)
 shape = SubResource("BoxShape3D_noarx")
 
@@ -55,7 +57,5 @@ size = 12.607
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -0.012583554, 0.99992085, 0, -0.99992085, -0.012583554, 0, 0, 0)
 
-[node name="Mouse" type="Node" parent="."]
+[node name="Node" type="Node" parent="."]
 script = ExtResource("4_r3fl7")
-
-[node name="Grid" type="Node3D" parent="."]
