@@ -1,14 +1,15 @@
-[gd_scene load_steps=13 format=3 uid="uid://bv0bmjlavptar"]
+[gd_scene load_steps=14 format=3 uid="uid://bv0bmjlavptar"]
 
-[ext_resource type="Script" uid="uid://cnslpko6i1jbp" path="res://grid_manager.gd" id="1_a0tk4"]
-[ext_resource type="Script" uid="uid://bc6ocyw5ya08i" path="res://Grid.gd" id="1_a202f"]
-[ext_resource type="Shader" uid="uid://bjt8y267s20eu" path="res://node_3d.gdshader" id="1_noarx"]
-[ext_resource type="PackedScene" uid="uid://dbiaqv2ljrblb" path="res://HoveredScene.tscn" id="2_jka67"]
-[ext_resource type="Script" uid="uid://bgqm2sqefksdi" path="res://mouse_collision.gd" id="4_r3fl7"]
+[ext_resource type="Script" uid="uid://cnslpko6i1jbp" path="res://Scripts/grid_manager.gd" id="1_t3l2h"]
+[ext_resource type="PackedScene" uid="uid://dbiaqv2ljrblb" path="res://Scenes/hovered_cell.tscn" id="2_a8auw"]
+[ext_resource type="PackedScene" uid="uid://bwa3fe2q3ueaa" path="res://Scenes/temp_cell.tscn" id="3_a8auw"]
+[ext_resource type="Shader" uid="uid://bjt8y267s20eu" path="res://Shaders/node_3d.gdshader" id="3_ifh66"]
+[ext_resource type="Script" uid="uid://bc6ocyw5ya08i" path="res://Scripts/Grid.gd" id="4_aeo3b"]
+[ext_resource type="Script" uid="uid://bgqm2sqefksdi" path="res://Scripts/mouse_collision.gd" id="5_worak"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_noarx"]
 render_priority = 0
-shader = ExtResource("1_noarx")
+shader = ExtResource("3_ifh66")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_noarx"]
 next_pass = SubResource("ShaderMaterial_noarx")
@@ -27,18 +28,20 @@ sky_material = SubResource("ProceduralSkyMaterial_a202f")
 background_mode = 2
 sky = SubResource("Sky_a202f")
 
-[node name="Node3D" type="Node3D" node_paths=PackedStringArray("grid", "camera", "collider", "mouse_collision")]
-script = ExtResource("1_a0tk4")
+[node name="Node3D" type="Node3D" node_paths=PackedStringArray("grid", "camera", "collider", "mouse_collision", "grid_parent")]
+script = ExtResource("1_t3l2h")
 grid = NodePath("VisualGrid")
 camera = NodePath("Camera3D")
 collider = NodePath("VisualGrid/RigidBody3D/CollisionShape3D")
 mouse_collision = NodePath("Mouse")
-hovered_gameobject = ExtResource("2_jka67")
+hovered_scene = ExtResource("2_a8auw")
+insctanced_scene = ExtResource("3_a8auw")
+grid_parent = NodePath("Grid")
 
 [node name="VisualGrid" type="MeshInstance3D" parent="."]
 material_override = SubResource("StandardMaterial3D_noarx")
 mesh = SubResource("ArrayMesh_a0tk4")
-script = ExtResource("1_a202f")
+script = ExtResource("4_aeo3b")
 
 [node name="RigidBody3D" type="RigidBody3D" parent="VisualGrid"]
 
@@ -56,6 +59,6 @@ size = 12.607
 transform = Transform3D(1, 0, 0, 0, -0.012583554, 0.99992085, 0, -0.99992085, -0.012583554, 0, 0, 0)
 
 [node name="Mouse" type="Node" parent="."]
-script = ExtResource("4_r3fl7")
+script = ExtResource("5_worak")
 
 [node name="Grid" type="Node3D" parent="."]

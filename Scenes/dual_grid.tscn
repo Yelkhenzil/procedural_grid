@@ -1,0 +1,100 @@
+[gd_scene load_steps=18 format=3 uid="uid://cqw1n3py43oj1"]
+
+[ext_resource type="Script" uid="uid://gc4pkcid3ibn" path="res://Scripts/dual_grid_manager.gd" id="1_or512"]
+[ext_resource type="PackedScene" uid="uid://dbiaqv2ljrblb" path="res://Scenes/hovered_cell.tscn" id="2_ocep7"]
+[ext_resource type="PackedScene" uid="uid://bwa3fe2q3ueaa" path="res://Scenes/temp_cell.tscn" id="3_d24bs"]
+[ext_resource type="Shader" uid="uid://bjt8y267s20eu" path="res://Shaders/node_3d.gdshader" id="4_ecxt4"]
+[ext_resource type="Shader" uid="uid://cg68xs0tr68x4" path="res://Shaders/dual.gdshader" id="4_or512"]
+[ext_resource type="Script" uid="uid://bc6ocyw5ya08i" path="res://Scripts/Grid.gd" id="5_qhmfw"]
+[ext_resource type="Script" uid="uid://bgqm2sqefksdi" path="res://Scripts/mouse_collision.gd" id="6_agq7p"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_noarx"]
+render_priority = 0
+shader = ExtResource("4_ecxt4")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_noarx"]
+next_pass = SubResource("ShaderMaterial_noarx")
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_a0tk4"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_noarx"]
+size = Vector3(5.025, 1, 1)
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_or512"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ocep7"]
+render_priority = 0
+shader = ExtResource("4_or512")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_d24bs"]
+next_pass = SubResource("ShaderMaterial_ocep7")
+albedo_color = Color(0, 0, 1, 1)
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_a202f"]
+
+[sub_resource type="Sky" id="Sky_a202f"]
+sky_material = SubResource("ProceduralSkyMaterial_a202f")
+
+[sub_resource type="Environment" id="Environment_noarx"]
+background_mode = 2
+sky = SubResource("Sky_a202f")
+
+[node name="Node3D" type="Node3D" node_paths=PackedStringArray("regular_grid", "dual_grid", "camera", "collider", "mouse_collision", "grid_parent")]
+script = ExtResource("1_or512")
+regular_grid = NodePath("VisualGrid")
+dual_grid = NodePath("VisualDualGrid")
+camera = NodePath("Camera3D")
+collider = NodePath("VisualGrid/RigidBody3D/CollisionShape3D")
+mouse_collision = NodePath("Mouse")
+hovered_scene = ExtResource("2_ocep7")
+insctanced_scene = ExtResource("3_d24bs")
+grid_parent = NodePath("Grid")
+
+[node name="VisualGrid" type="MeshInstance3D" parent="."]
+material_override = SubResource("StandardMaterial3D_noarx")
+mesh = SubResource("ArrayMesh_a0tk4")
+script = ExtResource("5_qhmfw")
+
+[node name="RigidBody3D" type="RigidBody3D" parent="VisualGrid"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="VisualGrid/RigidBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 0)
+shape = SubResource("BoxShape3D_noarx")
+
+[node name="VisualDualGrid" type="MeshInstance3D" parent="."]
+material_override = SubResource("StandardMaterial3D_noarx")
+mesh = SubResource("ArrayMesh_or512")
+skeleton = NodePath("../VisualGrid")
+script = ExtResource("5_qhmfw")
+
+[node name="RigidBody3D" type="RigidBody3D" parent="VisualDualGrid"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="VisualDualGrid/RigidBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 0)
+shape = SubResource("BoxShape3D_noarx")
+
+[node name="VisualDualGrid" type="MeshInstance3D" parent="VisualDualGrid"]
+material_overlay = SubResource("StandardMaterial3D_d24bs")
+mesh = SubResource("ArrayMesh_or512")
+skeleton = NodePath("../VisualGrid")
+script = ExtResource("5_qhmfw")
+
+[node name="RigidBody3D" type="RigidBody3D" parent="VisualDualGrid/VisualDualGrid"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="VisualDualGrid/VisualDualGrid/RigidBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 0)
+shape = SubResource("BoxShape3D_noarx")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 4.7101955, 7.52705, 1.8428702)
+environment = SubResource("Environment_noarx")
+projection = 1
+size = 12.607
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -0.012583554, 0.99992085, 0, -0.99992085, -0.012583554, 0, 0, 0)
+
+[node name="Mouse" type="Node" parent="."]
+script = ExtResource("6_agq7p")
+
+[node name="Grid" type="Node3D" parent="."]

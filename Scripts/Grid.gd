@@ -2,12 +2,11 @@ class_name Grid
 
 extends MeshInstance3D
 
-var grid_size: int =  50
 var cell_size: float =  2
-
-func create_mesh(primitive_Type:Mesh.PrimitiveType,gridsize:int,cellsize:float):
-	self.grid_size = gridsize
+var offset: Vector3 =  Vector3(10,0,5)
+func create_mesh(primitive_Type:Mesh.PrimitiveType,grid_size:int,cellsize:float,offsetpos:Vector3):
 	self.cell_size = cellsize
+	self.offset = offsetpos
 	var surface_array = []
 	surface_array.resize(Mesh.ARRAY_MAX)
 
@@ -23,7 +22,7 @@ func create_mesh(primitive_Type:Mesh.PrimitiveType,gridsize:int,cellsize:float):
 			normals.append(Vector3(0,1,0))
 			uvs.append(Vector2(i/(float)(grid_size),j/(float)(grid_size)))
 	
-	var indices  = init_indices()
+	var indices  = init_indices(grid_size)
 		# Assign arrays to surface array.
 	surface_array[Mesh.ARRAY_VERTEX] = verts
 	surface_array[Mesh.ARRAY_TEX_UV] = uvs
@@ -31,12 +30,14 @@ func create_mesh(primitive_Type:Mesh.PrimitiveType,gridsize:int,cellsize:float):
 	surface_array[Mesh.ARRAY_INDEX] = indices
 	mesh.add_surface_from_arrays(primitive_Type, surface_array)
 	mesh.surface_get_material(0)
+	print(offset)
+	position = offset
 
 
 func clean_mesh():
 	mesh.clear_surfaces()
 
-func init_indices():
+func init_indices(grid_size:int):
 	var indices = PackedInt32Array()
 	for j in range(grid_size+1):
 		for i in range (grid_size):		
