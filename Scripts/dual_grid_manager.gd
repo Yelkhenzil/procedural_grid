@@ -20,10 +20,14 @@ extends Node3D
 @export var collider : CollisionShape3D
 @export var mouse_collision : MouseCollision
 @export var hovered_scene : PackedScene
-@export var insctanced_scene : PackedScene
+@export var corner : PackedScene
+@export var full : PackedScene
+@export var side : PackedScene
+@export var diagonal : PackedScene
+@export var intern : PackedScene
 @export var grid_parent : Node3D
 var hovered_cell : MeshInstance3D
-var grid_data : Array[MeshInstance3D]
+var grid_data : Array[Node3D]
 var grid_bool : Array[bool]
 
 func _ready() -> void:
@@ -59,25 +63,78 @@ func _input(event):
 
 	
 func update_dual_grid_cells(i,j):
+	grid_bool[j*grid_size+i] = true
 	update_dual_grid_cell(i,j)
-	update_dual_grid_cell(i,j+1)
 	update_dual_grid_cell(i+1,j)
+	update_dual_grid_cell(i,j+1)
 	update_dual_grid_cell(i+1,j+1)
+	
 
 func update_dual_grid_cell(i,j):
-	if(!grid_bool[j*grid_size+i]) : 
-		var adding = insctanced_scene.instantiate()
-		adding.scale*=cell_size
-		adding.position = Vector3(i*cell_size,0,j*cell_size)
-		adding.name = "[%d,%d]"%[i,j]
-		grid_parent.add_child(adding)
-		grid_bool[j*grid_size+i] = true
-		grid_data[j*grid_size+i] = adding
-		print(grid_data[j*grid_size+i])
-	else : 
-		grid_bool[j*grid_size+i] = false
+	var flag = get_flag(i,j)
+	if(grid_data[j*grid_size+i]!=null):
 		grid_data[j*grid_size+i].queue_free()
+	if(flag ==0) :
+		grid_data[j*grid_size+i] = null
+		return 
+	var object =  get_3d_pattern(flag)
+	var adding = object.instantiate()
+	grid_data[j*grid_size+i] = adding
+	adding.scale*=cell_size
+	adding.position = Vector3(i*cell_size,0,j*cell_size)
+	rotate_pattern(adding,flag)
+	adding.name = "[%d,%d]"%[i,j]
+	grid_parent.add_child(adding)
+
+	
+	print(grid_data[j*grid_size+i])
 		
+func get_flag(i,j):
+	var tl = is_activated(i-1,j-1)<<3
+	var tr = is_activated(i,j-1)<<2
+	var bl = is_activated(i-1,j)<<1
+	var br = is_activated(i,j)
+	var flag = tl+tr+bl+br
+	return flag
+	
+func get_3d_pattern(flag : int) :
+	if(flag ==15):
+		return full
+	elif(flag == 1 || flag == 2 || flag == 4 || flag == 8):
+		return corner
+	elif(flag == 7 || flag == 11 || flag == 13 || flag == 14):
+		return intern
+	elif(flag == 9 || flag == 6 ):
+		return diagonal
+	elif(flag == 3 || flag == 5 || flag == 10 || flag == 12) :  
+		return side
+
+func rotate_pattern(adding : Node3D,flag):
+	if(flag ==3 || flag == 1 || flag == 11 || flag == 9):
+		adding.rotate_y(PI/2)
+	if(flag ==5 || flag == 4 || flag == 7):
+		adding.rotate_y(PI)
+	if(flag ==12 || flag == 8 || flag == 13):
+		adding.rotate_y(3*PI/2)
+
+
+	"""elif(flag == 1 || flag == 2 || flag == 4 || flag == 8):
+
+	elif(flag == 7 || flag == 11 || flag == 13 || flag == 14):
+		return intern
+	elif(flag == 9 || flag == 6 ):
+		return diagonal
+	elif(flag == 3 || flag == 5 || flag == 10 || flag == 12) :  
+		return side"""
+		
+func is_activated(i,j):
+	if(i<0 or j<0 or i>grid_size or j>grid_size):
+		print("%s     %s "%[i,j])
+		return 0
+	else : 
+		return int(grid_bool[i+j*grid_size])
+		
+
 func update_mesh():
 	if(regular_grid!=null):
 		regular_grid.clean_mesh()

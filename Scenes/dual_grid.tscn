@@ -2,11 +2,14 @@
 
 [ext_resource type="Script" uid="uid://gc4pkcid3ibn" path="res://Scripts/dual_grid_manager.gd" id="1_or512"]
 [ext_resource type="PackedScene" uid="uid://dbiaqv2ljrblb" path="res://Scenes/hovered_cell.tscn" id="2_ocep7"]
-[ext_resource type="PackedScene" uid="uid://bwa3fe2q3ueaa" path="res://Scenes/temp_cell.tscn" id="3_d24bs"]
+[ext_resource type="PackedScene" uid="uid://rqy6jodyfgh4" path="res://Models/extern_corner.glb" id="3_ocep7"]
+[ext_resource type="PackedScene" uid="uid://dr0k1ol8ec63c" path="res://Models/full.glb" id="4_agq7p"]
 [ext_resource type="Shader" uid="uid://bjt8y267s20eu" path="res://Shaders/node_3d.gdshader" id="4_ecxt4"]
-[ext_resource type="Shader" uid="uid://cg68xs0tr68x4" path="res://Shaders/dual.gdshader" id="4_or512"]
 [ext_resource type="Script" uid="uid://bc6ocyw5ya08i" path="res://Scripts/Grid.gd" id="5_qhmfw"]
+[ext_resource type="PackedScene" uid="uid://bptcc0cd2sjac" path="res://Models/side.glb" id="5_x73gi"]
+[ext_resource type="PackedScene" uid="uid://ci71opcrl13mm" path="res://Models/diagonal.glb" id="6_772gt"]
 [ext_resource type="Script" uid="uid://bgqm2sqefksdi" path="res://Scripts/mouse_collision.gd" id="6_agq7p"]
+[ext_resource type="PackedScene" uid="uid://c8638bqvnkpte" path="res://Models/intern_corner.glb" id="7_op3ey"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_noarx"]
 render_priority = 0
@@ -21,14 +24,6 @@ next_pass = SubResource("ShaderMaterial_noarx")
 size = Vector3(5.025, 1, 1)
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_or512"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_ocep7"]
-render_priority = 0
-shader = ExtResource("4_or512")
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_d24bs"]
-next_pass = SubResource("ShaderMaterial_ocep7")
-albedo_color = Color(0, 0, 1, 1)
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_a202f"]
 
@@ -47,10 +42,15 @@ camera = NodePath("Camera3D")
 collider = NodePath("VisualGrid/RigidBody3D/CollisionShape3D")
 mouse_collision = NodePath("Mouse")
 hovered_scene = ExtResource("2_ocep7")
-insctanced_scene = ExtResource("3_d24bs")
+corner = ExtResource("3_ocep7")
+full = ExtResource("4_agq7p")
+side = ExtResource("5_x73gi")
+diagonal = ExtResource("6_772gt")
+intern = ExtResource("7_op3ey")
 grid_parent = NodePath("Grid")
 
 [node name="VisualGrid" type="MeshInstance3D" parent="." unique_id=1941198014]
+visible = false
 material_override = SubResource("StandardMaterial3D_noarx")
 mesh = SubResource("ArrayMesh_a0tk4")
 script = ExtResource("5_qhmfw")
@@ -62,6 +62,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 0)
 shape = SubResource("BoxShape3D_noarx")
 
 [node name="VisualDualGrid" type="MeshInstance3D" parent="." unique_id=2091618622]
+visible = false
 material_override = SubResource("StandardMaterial3D_noarx")
 mesh = SubResource("ArrayMesh_or512")
 skeleton = NodePath("../VisualGrid")
@@ -73,23 +74,11 @@ script = ExtResource("5_qhmfw")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 0)
 shape = SubResource("BoxShape3D_noarx")
 
-[node name="VisualDualGrid" type="MeshInstance3D" parent="VisualDualGrid" unique_id=1005514386]
-material_overlay = SubResource("StandardMaterial3D_d24bs")
-mesh = SubResource("ArrayMesh_or512")
-skeleton = NodePath("../VisualGrid")
-script = ExtResource("5_qhmfw")
-
-[node name="RigidBody3D" type="RigidBody3D" parent="VisualDualGrid/VisualDualGrid" unique_id=1148976490]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="VisualDualGrid/VisualDualGrid/RigidBody3D" unique_id=1203732340]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 0)
-shape = SubResource("BoxShape3D_noarx")
-
 [node name="Camera3D" type="Camera3D" parent="." unique_id=632897285]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 4.7101955, 7.52705, 1.8428702)
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0.455, 0.707, 1.843)
 environment = SubResource("Environment_noarx")
 projection = 1
-size = 12.607
+size = 7.711
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1181652016]
 transform = Transform3D(1, 0, 0, 0, -0.012583554, 0.99992085, 0, -0.99992085, -0.012583554, 0, 0, 0)
@@ -98,3 +87,6 @@ transform = Transform3D(1, 0, 0, 0, -0.012583554, 0.99992085, 0, -0.99992085, -0
 script = ExtResource("6_agq7p")
 
 [node name="Grid" type="Node3D" parent="." unique_id=1601251310]
+
+[node name="side" parent="." unique_id=2085870641 instance=ExtResource("5_x73gi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7453141, 0, 2.4118195)
