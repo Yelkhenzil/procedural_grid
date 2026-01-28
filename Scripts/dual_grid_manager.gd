@@ -34,9 +34,10 @@ func _ready() -> void:
 	collider.global_position = Vector3(grid_size*cell_size/2.0,-0.05,grid_size*cell_size/2.0)
 	hovered_cell = hovered_scene.instantiate()
 	hovered_cell.scale*=cell_size
-	grid_data.resize(grid_size*grid_size)
-	grid_bool.resize(grid_size*grid_size)
+	grid_data.resize((grid_size+1)**2)
+	grid_bool.resize((grid_size+1)**2)
 	mouse_collision.add_child(hovered_cell)
+
 
 
 func _physics_process(delta: float) -> void:
@@ -52,9 +53,30 @@ func _physics_process(delta: float) -> void:
 func _input(event):
 	# Mouse in viewport coordinates.
 	if event is InputEventMouseButton && event.button_index == 1 && event.pressed:
-		mouse_collision.on_click(camera,grid_size,cell_size,grid_bool,grid_data,insctanced_scene,grid_parent)
-			
-		
+		var index = mouse_collision.on_click_dual(camera,grid_size,cell_size)
+		if(index!=null) : 
+			update_dual_grid_cells(index[0],index[1])
+
+	
+func update_dual_grid_cells(i,j):
+	update_dual_grid_cell(i,j)
+	update_dual_grid_cell(i,j+1)
+	update_dual_grid_cell(i+1,j)
+	update_dual_grid_cell(i+1,j+1)
+
+func update_dual_grid_cell(i,j):
+	if(!grid_bool[j*grid_size+i]) : 
+		var adding = insctanced_scene.instantiate()
+		adding.scale*=cell_size
+		adding.position = Vector3(i*cell_size,0,j*cell_size)
+		adding.name = "[%d,%d]"%[i,j]
+		grid_parent.add_child(adding)
+		grid_bool[j*grid_size+i] = true
+		grid_data[j*grid_size+i] = adding
+		print(grid_data[j*grid_size+i])
+	else : 
+		grid_bool[j*grid_size+i] = false
+		grid_data[j*grid_size+i].queue_free()
 		
 func update_mesh():
 	if(regular_grid!=null):

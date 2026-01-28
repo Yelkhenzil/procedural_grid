@@ -24,3 +24,12 @@ func on_click(camera :Camera3D,grid_size:int,cell_size:float,grid_bool : Array[b
 		else : 
 			grid_bool[j*grid_size+i] = false
 			grid_data[j*grid_size+i].queue_free()
+
+
+func on_click_dual(camera :Camera3D,grid_size:int,cell_size:float):
+	var mouse3d = mouse_grid_position(camera,cell_size)
+	if(mouse3d.x >= 0 and mouse3d.z >= 0 and mouse3d.x <= grid_size*cell_size and mouse3d.z <= grid_size*cell_size):
+		var i = floori((mouse3d.x-cell_size/2)/cell_size)
+		var j = floori((mouse3d.z-cell_size/2)/cell_size)
+		return [i,j]
+	return null
