@@ -39,7 +39,7 @@ func _ready() -> void:
 	hovered_cell = hovered_scene.instantiate()
 	hovered_cell.scale*=cell_size
 	grid_data.resize((grid_size+1)**2)
-	grid_bool.resize((grid_size+1)**2)
+	grid_bool.resize((grid_size)**2)
 	mouse_collision.add_child(hovered_cell)
 
 
@@ -63,8 +63,10 @@ func _input(event):
 
 	
 func update_dual_grid_cells(i,j):
-	grid_bool[j*grid_size+i] = true
+	grid_bool[j*grid_size+i] = !grid_bool[j*grid_size+i]
 	update_dual_grid_cell(i,j)
+	print("tl : (%s,%s) , tr : (%s,%s) , bl : (%s,%s) , br : (%s,%s)"%[j,i,j,i+1,j+1,i,j+1,i+1])
+	print("tl : %s , tr : %s , bl : %s , br : %s"%[j*grid_size+i,j*grid_size+i+1,(1+j)*grid_size+i,(1+j)*grid_size+i+1])
 	update_dual_grid_cell(i+1,j)
 	update_dual_grid_cell(i,j+1)
 	update_dual_grid_cell(i+1,j+1)
@@ -72,22 +74,23 @@ func update_dual_grid_cells(i,j):
 
 func update_dual_grid_cell(i,j):
 	var flag = get_flag(i,j)
-	if(grid_data[j*grid_size+i]!=null):
-		grid_data[j*grid_size+i].queue_free()
+	if(grid_data[j*(grid_size+1)+i]!=null):
+		grid_data[j*(grid_size+1)+i].free()
 	if(flag ==0) :
-		grid_data[j*grid_size+i] = null
+		grid_data[j*(grid_size+1)+i] = null
 		return 
+	print(j*(grid_size+1)+i)
 	var object =  get_3d_pattern(flag)
 	var adding = object.instantiate()
-	grid_data[j*grid_size+i] = adding
+	grid_data[j*(grid_size+1)+i] = adding
 	adding.scale*=cell_size
 	adding.position = Vector3(i*cell_size,0,j*cell_size)
 	rotate_pattern(adding,flag)
-	adding.name = "[%d,%d]"%[i,j]
+	adding.name = "[%d,%d]"%[j,i]
 	grid_parent.add_child(adding)
 
 	
-	print(grid_data[j*grid_size+i])
+
 		
 func get_flag(i,j):
 	var tl = is_activated(i-1,j-1)<<3
@@ -116,20 +119,9 @@ func rotate_pattern(adding : Node3D,flag):
 		adding.rotate_y(PI)
 	if(flag ==12 || flag == 8 || flag == 13):
 		adding.rotate_y(3*PI/2)
-
-
-	"""elif(flag == 1 || flag == 2 || flag == 4 || flag == 8):
-
-	elif(flag == 7 || flag == 11 || flag == 13 || flag == 14):
-		return intern
-	elif(flag == 9 || flag == 6 ):
-		return diagonal
-	elif(flag == 3 || flag == 5 || flag == 10 || flag == 12) :  
-		return side"""
 		
 func is_activated(i,j):
-	if(i<0 or j<0 or i>grid_size or j>grid_size):
-		print("%s     %s "%[i,j])
+	if(i<0 or j<0 or i>=grid_size or j>=grid_size):
 		return 0
 	else : 
 		return int(grid_bool[i+j*grid_size])

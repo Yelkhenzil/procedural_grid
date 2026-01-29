@@ -38,6 +38,7 @@ sky = SubResource("Sky_a202f")
 script = ExtResource("1_or512")
 regular_grid = NodePath("VisualGrid")
 dual_grid = NodePath("VisualDualGrid")
+grid_size = 3
 camera = NodePath("Camera3D")
 collider = NodePath("VisualGrid/RigidBody3D/CollisionShape3D")
 mouse_collision = NodePath("Mouse")
